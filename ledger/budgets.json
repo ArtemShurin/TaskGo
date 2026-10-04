@@ -1,0 +1,4 @@
+[
+  {"category": "транспорт", "limit": 2000, "period": "month"},
+  {"category": "развлечения", "limit": 3000, "period": "month"}
+]
