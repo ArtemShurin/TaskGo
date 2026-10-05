@@ -32,14 +32,14 @@ func AddTransaction(tx Transaction) error {
 		return errors.New("transaction amount cannot be zero")
 	}
 
-	if budget, ok := budgets[tx.Category]; ok {
-		var spent float64
-		for _, existing := range transactions {
-			if existing.Category == tx.Category {
-				spent += existing.Amount
+	if b, ok := budgets[tx.Category]; ok {
+		var sum float64
+		for _, t := range transactions {
+			if t.Category == tx.Category {
+				sum += t.Amount
 			}
 		}
-		if spent+tx.Amount > budget.Limit {
+		if sum+tx.Amount > b.Limit {
 			return errors.New("budget exceeded")
 		}
 	}
