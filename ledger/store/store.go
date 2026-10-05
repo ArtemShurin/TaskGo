@@ -7,7 +7,6 @@ import (
 	"io"
 )
 
-// Transaction represents a single financial transaction.
 type Transaction struct {
 	ID          int
 	Amount      float64
@@ -16,7 +15,6 @@ type Transaction struct {
 	Date        string
 }
 
-// Budget represents a spending limit set for a category.
 type Budget struct {
 	Category string  `json:"category"`
 	Limit    float64 `json:"limit"`
@@ -29,9 +27,6 @@ var budgets = map[string]Budget{
 	"еда": {Category: "еда", Limit: 5000, Period: "month"},
 }
 
-// AddTransaction appends tx to the in-memory store, assigning it a new ID.
-// It returns an error if the transaction amount is zero, or if a budget is
-// set for tx.Category and adding tx would exceed that budget's limit.
 func AddTransaction(tx Transaction) error {
 	if tx.Amount == 0 {
 		return errors.New("transaction amount cannot be zero")
@@ -54,20 +49,16 @@ func AddTransaction(tx Transaction) error {
 	return nil
 }
 
-// ListTransactions returns a copy of all stored transactions.
 func ListTransactions() []Transaction {
 	result := make([]Transaction, len(transactions))
 	copy(result, transactions)
 	return result
 }
 
-// SetBudget adds a new budget or updates the limit for an existing category.
 func SetBudget(b Budget) {
 	budgets[b.Category] = b
 }
 
-// LoadBudgets reads a JSON array of budgets from r and registers each one
-// via SetBudget. It returns an error if reading or parsing fails.
 func LoadBudgets(r io.Reader) error {
 	data, err := io.ReadAll(r)
 	if err != nil {

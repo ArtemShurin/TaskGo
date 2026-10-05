@@ -12,7 +12,6 @@ import (
 func main() {
 	log.Println("Ledger service started")
 
-	// --- Базовая демонстрация хранения транзакций ---
 	seedTransactions := []store.Transaction{
 		{Amount: 1200.50, Category: "Food", Description: "Groceries", Date: "2026-10-01"},
 		{Amount: 350, Category: "Transport", Description: "Taxi ride", Date: "2026-10-02"},
@@ -24,11 +23,8 @@ func main() {
 		}
 	}
 
-	// --- Сценарии проверки бюджета ---
-	// Бюджет "еда" = 5000 (задан по умолчанию в хранилище).
 	fmt.Println("\n--- Budget scenarios for category 'еда' (limit 5000) ---")
 
-	// Сценарий 1: транзакция в пределах лимита — ожидается успех.
 	tx1 := store.Transaction{Amount: 3000, Category: "еда", Description: "Супермаркет", Date: "2026-10-04"}
 	if err := store.AddTransaction(tx1); err != nil {
 		fmt.Printf("REJECTED: %+v -> %v\n", tx1, err)
@@ -36,7 +32,6 @@ func main() {
 		fmt.Printf("ACCEPTED: %+v\n", tx1)
 	}
 
-	// Сценарий 2: ещё одна транзакция, суммарно всё ещё в пределах лимита (3000+1500=4500).
 	tx2 := store.Transaction{Amount: 1500, Category: "еда", Description: "Кафе", Date: "2026-10-05"}
 	if err := store.AddTransaction(tx2); err != nil {
 		fmt.Printf("REJECTED: %+v -> %v\n", tx2, err)
@@ -44,7 +39,6 @@ func main() {
 		fmt.Printf("ACCEPTED: %+v\n", tx2)
 	}
 
-	// Сценарий 3: транзакция превышает оставшийся лимит (4500+1000=5500 > 5000) — ожидается ошибка.
 	tx3 := store.Transaction{Amount: 1000, Category: "еда", Description: "Ресторан", Date: "2026-10-06"}
 	if err := store.AddTransaction(tx3); err != nil {
 		fmt.Printf("REJECTED: %+v -> %v\n", tx3, err)
@@ -52,7 +46,6 @@ func main() {
 		fmt.Printf("ACCEPTED: %+v\n", tx3)
 	}
 
-	// Демонстрация SetBudget: устанавливаем новый бюджет на лету и тут же проверяем его.
 	store.SetBudget(store.Budget{Category: "спорт", Limit: 2000, Period: "month"})
 	tx4 := store.Transaction{Amount: 2500, Category: "спорт", Description: "Абонемент", Date: "2026-10-07"}
 	if err := store.AddTransaction(tx4); err != nil {
@@ -61,7 +54,6 @@ func main() {
 		fmt.Printf("ACCEPTED: %+v\n", tx4)
 	}
 
-	// --- Загрузка бюджетов из JSON-файла ---
 	fmt.Println("\n--- Loading budgets from budgets.json ---")
 	file, err := os.Open("budgets.json")
 	if err != nil {
@@ -74,7 +66,6 @@ func main() {
 		} else {
 			fmt.Println("Budgets loaded successfully")
 
-			// Проверяем, что новый бюджет "транспорт" (лимит 2000) применяется.
 			tx5 := store.Transaction{Amount: 2500, Category: "транспорт", Description: "Такси", Date: "2026-10-08"}
 			if err := store.AddTransaction(tx5); err != nil {
 				fmt.Printf("REJECTED: %+v -> %v\n", tx5, err)
@@ -84,7 +75,6 @@ func main() {
 		}
 	}
 
-	// --- Итоговый список транзакций ---
 	fmt.Println("\nTransactions list:")
 	for _, tx := range store.ListTransactions() {
 		fmt.Printf("ID: %d | Amount: %.2f | Category: %s | Description: %s | Date: %s\n",
